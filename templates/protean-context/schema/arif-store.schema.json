@@ -1,0 +1,44 @@
+{
+  "schema": "arif-store-v1",
+  "schemaVersion": 1,
+  "title": "arif.json store manifest",
+  "description": "The storage contract of one Arif store: file-based metadata-first records, a derived empty index, and the embedding slot. The scaffold bundles no database, no server, and no corpus.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "schemaVersion", "store", "index", "embedding"],
+  "properties": {
+    "schema": {"type": "string", "const": "arif-store-v1"},
+    "schemaVersion": {"type": "integer", "minimum": 1},
+    "store": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "recordsDir", "contentDir"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["file-v1"]},
+        "recordsDir": {"type": "string", "pattern": "^[^/]+$"},
+        "contentDir": {"type": "string", "pattern": "^[^/]+$"}
+      }
+    },
+    "index": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "dir"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["none"]},
+        "dir": {"type": "string", "pattern": "^[^/]+$"}
+      }
+    },
+    "embedding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "provider", "model", "dimensions", "field"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "provider": {"type": ["string", "null"]},
+        "model": {"type": ["string", "null"]},
+        "dimensions": {"type": ["integer", "null"], "minimum": 1},
+        "field": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"}
+      }
+    }
+  }
+}

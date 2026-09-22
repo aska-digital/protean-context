@@ -1,0 +1,2 @@
+SYNTHETIC TEST DATA
+sample document for the synthetic adapter fixture

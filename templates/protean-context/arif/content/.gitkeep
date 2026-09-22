@@ -1,0 +1,1 @@
+Empty at ship: this directory holds content-addressed blobs named by sha256, created by `ingest` or by you. No bundled content.

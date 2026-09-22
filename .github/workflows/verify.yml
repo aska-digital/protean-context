@@ -1,0 +1,23 @@
+# The one workflow of this ingredient (implementer freedom F4 of the locked
+# architecture, decision D9 open item 6): a single job that runs the
+# repository's own ordered gate runner and nothing else.
+#
+# verify-all.py is fail closed: it exits 0 only when all 14 steps pass, so this
+# workflow is green only when no step failed and no step was skipped. No snippet
+# here is copied from another repository; the single action reference is the
+# official actions/checkout action (v4).
+
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - name: Run the ordered gate runner
+        run: python3 build/verify-all.py

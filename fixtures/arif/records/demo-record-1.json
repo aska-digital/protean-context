@@ -1,0 +1,32 @@
+{
+  "SYNTHETIC TEST DATA": "fixture container; the document below is synthetic input and is never read by init",
+  "document": {
+    "schema": "arif-record-v1",
+    "schemaVersion": 1,
+    "id": "demo-record-1",
+    "source": {
+      "title": "SYNTHETIC TEST DATA sample document",
+      "locator": "sample.txt",
+      "kind": "document",
+      "retrieved": null
+    },
+    "content": {
+      "ref": "content/438a419d8b1579c88248948b1e1dfc2fc78b5ddadb78cc8a381cf990df7c506d",
+      "mediaType": "text/plain",
+      "checksum": "438a419d8b1579c88248948b1e1dfc2fc78b5ddadb78cc8a381cf990df7c506d",
+      "bytes": 82
+    },
+    "metadata": {
+      "topics": ["synthetic"],
+      "tags": ["SYNTHETIC TEST DATA"],
+      "language": "en",
+      "license": null
+    },
+    "provenance": {
+      "adapter": "synthetic-adapter",
+      "ingestedAt": "1970-01-01T00:00:00Z",
+      "method": "fixture"
+    },
+    "embedding": null
+  }
+}
