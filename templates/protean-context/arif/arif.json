@@ -1,0 +1,20 @@
+{
+  "schema": "arif-store-v1",
+  "schemaVersion": 1,
+  "store": {
+    "kind": "file-v1",
+    "recordsDir": "records",
+    "contentDir": "content"
+  },
+  "index": {
+    "kind": "none",
+    "dir": "index"
+  },
+  "embedding": {
+    "enabled": false,
+    "provider": null,
+    "model": null,
+    "dimensions": null,
+    "field": "embedding"
+  }
+}

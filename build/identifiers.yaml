@@ -1,0 +1,29 @@
+# build/identifiers.yaml - the term registry this repository's identifier gate reads.
+# This file is the gate's input, not a leak surface: the gate skips it and scans
+# every other file in the tree.
+
+# Internal agent names (protean codenames). They are never public-facing terms
+# and must not appear anywhere else in this repository.
+internal_agent_names:
+  - Lugia
+  - Azaraki
+  - KodeKoot
+  - Shayba
+  - Halakukhan
+
+# Decision record: architecture decision D3.1 of the protean-context lock (2026-09-22).
+# Public system terms, not internal agent names. Scoping: an Eldunari is one
+# named knowledge tree inside an Eldunarya, never a person, an agent, or a
+# profile. Each term below is allowlisted by that decision, with its reason.
+public_system_terms:
+  - term: eldunari
+    reason: the singular unit of an Eldunarya (one named knowledge tree)
+  - term: eldunarya
+    reason: the user-owned collection of named Eldunari
+  - term: arif
+    reason: the user-owned external knowledge base
+
+# No baseline section exists here on purpose: a silent baseline is forbidden
+# (architecture decision D3.1 of the protean-context lock (2026-09-22)), so
+# every hit is a failure.
+baseline: []

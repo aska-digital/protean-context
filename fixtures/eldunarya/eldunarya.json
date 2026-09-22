@@ -1,0 +1,14 @@
+{
+  "SYNTHETIC TEST DATA": "fixture container; the document below is synthetic input and is never read by init",
+  "document": {
+    "schema": "eldunarya-v1",
+    "schemaVersion": 1,
+    "eldunari": [
+      {
+        "name": "demo",
+        "path": "eldunari/demo",
+        "router": "eldunari/demo/ROUTER.md"
+      }
+    ]
+  }
+}

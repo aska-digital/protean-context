@@ -1,0 +1,26 @@
+{
+  "schema": "eldunarya-v1",
+  "schemaVersion": 1,
+  "title": "eldunarya.json registry",
+  "description": "One Eldunarya: the two identity fields plus one entry per named Eldunari. Paths are relative to the Eldunarya root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "schemaVersion", "eldunari"],
+  "properties": {
+    "schema": {"type": "string", "const": "eldunarya-v1"},
+    "schemaVersion": {"type": "integer", "minimum": 1},
+    "eldunari": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "path", "router"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z]([a-z0-9-]{0,46}[a-z0-9])?$"},
+          "path": {"type": "string", "pattern": "^eldunari/[a-z0-9-]+$"},
+          "router": {"type": "string", "pattern": "^eldunari/[a-z0-9-]+/ROUTER\\.md$"}
+        }
+      }
+    }
+  }
+}

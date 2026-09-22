@@ -1,0 +1,24 @@
+{
+  "schema": "eldunari-v1",
+  "schemaVersion": 1,
+  "title": "per-Eldunari tree",
+  "description": "The tree of one Eldunari as a document: the hot-path router plus the payload directory. The payload holds markdown modules and the stub that states the one-fact-one-home rule.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["router", "modules"],
+  "properties": {
+    "router": {"type": "string", "const": "ROUTER.md"},
+    "modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stub", "files"],
+      "properties": {
+        "stub": {"type": "string", "const": "README.md"},
+        "files": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[^/]+\\.md$"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "protean-context",
+  "version": "0.1.0",
+  "contract": "Versioned empty scaffolds and a stdlib-only bootstrap CLI that initialize a user-owned Eldunarya knowledge tree and Arif knowledge base with no bundled data.",
+  "kind": "skills",
+  "entrypoint": "install.sh",
+  "payload": [
+    "skills/protean-context",
+    "scripts/protean-context",
+    "templates/protean-context",
+    "gates/protean-context"
+  ],
+  "installTargets": [
+    "skills/protean-context",
+    "scripts/protean-context",
+    "templates/protean-context",
+    "gates/protean-context"
+  ],
+  "gates": [
+    {
+      "name": "post-install-sanity",
+      "cwd": ".",
+      "postInstall": true,
+      "cmd": "python3 gates/protean-context/check-post-install.py ."
+    }
+  ],
+  "requires": [],
+  "recommends": [],
+  "runtime": {
+    "python": ">=3.9",
+    "bin": [
+      "bash",
+      "git"
+    ]
+  },
+  "license": "MIT",
+  "open": []
+}
