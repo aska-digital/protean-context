@@ -37,6 +37,7 @@ SHIPPED_ALLOWLIST = (
     "schema/arif-store.schema.json",
     "schema/arif-record.schema.json",
     "docs/rehoming.md",
+    "docs/zero-context.md",
 )
 CREATED_ALLOWLIST = (
     ".protean-context-receipt.json",

@@ -23,9 +23,10 @@ ORDER (this list is the gate list, and this docstring is authoritative):
   11. two independent inits are identical           python3 -m unittest tests.test_deterministic_init
   12. remove deletes only what init created          python3 -m unittest tests.test_removal
   13. forward-only, additive, backed-up migrations   python3 -m unittest tests.test_migration_rules
-  14. fresh-user install, plan, init, verify         gates/protean-context/fresh-install-test.py
+  14. router discipline over initialized targets      python3 -m unittest tests.test_router_discipline
+  15. fresh-user install, plan, init, verify         gates/protean-context/fresh-install-test.py
 
-Exit: 0 = all 14 steps pass; 1 = any step failed or skipped.
+Exit: 0 = all 15 steps pass; 1 = any step failed or skipped.
 """
 
 import os
@@ -63,6 +64,8 @@ STEPS = (
      [sys.executable, "-m", "unittest", "tests.test_removal"]),
     ("migration rules (unit test)",
      [sys.executable, "-m", "unittest", "tests.test_migration_rules"]),
+    ("router discipline (unit test)",
+     [sys.executable, "-m", "unittest", "tests.test_router_discipline"]),
     ("fresh install end to end",
      [sys.executable, "gates/protean-context/fresh-install-test.py"]),
 )
