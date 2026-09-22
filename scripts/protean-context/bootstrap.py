@@ -21,7 +21,7 @@ exits 0.
 --offline is accepted on every command and is truthful by construction: no
 shipped code imports a network module (gate 7 proves it) and no code path
 opens a socket (test 9 proves it). require_network() below is the hook that
-would refuse any future network path; nothing in v0.1.0 calls it.
+would refuse any future network path; nothing in v1.0.0 calls it.
 """
 
 import argparse

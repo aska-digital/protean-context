@@ -8,7 +8,7 @@
 set -euo pipefail
 
 SLUG="protean-context"
-VERSION="0.1.0"
+VERSION="1.0.0"
 
 PAYLOAD=(
   "skills/protean-context"

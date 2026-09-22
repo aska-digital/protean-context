@@ -1,7 +1,7 @@
 ---
 name: protean-context
 description: Versioned empty scaffolds and a stdlib-only bootstrap CLI that initialize a user-owned Eldunarya knowledge tree and Arif knowledge base with no bundled data.
-version: 0.1.0
+version: 1.0.0
 license: MIT
 ---
 

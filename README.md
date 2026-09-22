@@ -161,7 +161,7 @@ The Arif side of a created target:
 - Metadata-first records (schema `arif-record-v1`): `id`, `source`, `content`, `metadata`, `provenance`, `embedding`. Readers answer source, topic, and provenance questions from metadata without loading content blobs. `content.ref` must resolve inside `content/`; the scaffold never invents timestamps and never rewrites ids.
 - Ingestion adapter boundary: you implement one Python module (`ADAPTER_NAME`, `ADAPTER_VERSION`, `collect(source)`) and pass it explicitly with `--adapter <file>`; the CLI validates every yielded record against `arif-record-v1` and writes all records or none. What the scaffold never does is stated verbatim in `templates/protean-context/arif/adapters/README.md`, the single home of that contract.
 - Embedding slot: `arif.json` carries an `embedding` object, default `enabled` false with null provider, model, and dimensions. While disabled, no record carries an embedding and `index/` stays empty. Enabling it is your edit plus your adapter work; the scaffold computes nothing and ships no default model.
-- Upgrade path: schema versions are compared on rerun; migrations are forward-only, additive, and backed up before replacement; a downgrade is refused with exit 2. Version 0.1.0 ships an empty migration registry, proven against a synthetic fixture pair.
+- Upgrade path: schema versions are compared on rerun; migrations are forward-only, additive, and backed up before replacement; a downgrade is refused with exit 2. Version 1.0.0 ships an empty migration registry, proven against a synthetic fixture pair.
 
 ## Re-homing and configuration
 
@@ -263,7 +263,7 @@ python3 scripts/protean-context/bootstrap.py remove --target {TARGET}
 - No live-state ingestion: nothing outside the explicit `--target` and `--source` is read or written (gate 9).
 - No plugin runtime and no MCP surface; absence is proven by read-back, not by claim.
 - No network access in any shipped code; network modules are hard-forbidden (gate 7).
-- Version 0.1.0 ships an empty migration registry; the mechanism is specified and fixture-tested now.
+- Version 1.0.0 ships an empty migration registry; the mechanism is specified and fixture-tested now.
 - Composition into `protean-kit` happens only through a lock entry that passes the compatibility proof and the ordered gate sequence; this repository alone does not claim kit membership.
 
 ## License

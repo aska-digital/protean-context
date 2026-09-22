@@ -2,6 +2,15 @@
 
 All notable changes to this repository are documented here. The format follows the kit convention: one entry per released version, newest first.
 
+## 1.0.0
+
+Stable release. No schema, scaffold, or CLI behavior changes from the 0.1.0 beta; this release promotes the beta to stable.
+
+Changed:
+
+- Version bump 0.1.0 to 1.0.0 across the ingredient descriptor, `install.sh`, the skill frontmatter, README, and code comments.
+- Repository metadata completed: full description, topics, wiki disabled to match sibling ingredients.
+
 ## 0.1.0
 
 First release, published as a prerelease.

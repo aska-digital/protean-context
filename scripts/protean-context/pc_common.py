@@ -151,7 +151,7 @@ def tree_digest(root):
 def require_network(offline, reason):
     """Refuse any code path that would need network access.
 
-    Nothing in v0.1.0 calls this: the scaffold has no network path at all.
+    Nothing in v1.0.0 calls this: the scaffold has no network path at all.
     It exists so that a future path cannot be added silently, and so that
     --offline is a refusal rather than a label.
     """

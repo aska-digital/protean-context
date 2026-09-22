@@ -15,7 +15,7 @@ Rules, all locked:
    Downgrade is never attempted.
 5. The receipt records applied migrations.
 
-v0.1.0 ships an EMPTY registry. The mechanism below is proven against a
+v1.0.0 ships an EMPTY registry. The mechanism below is proven against a
 synthetic v1-to-v2 fixture pair in tests/test_migration_rules.py; a release
 that ships a migration adds one entry to MIGRATIONS and nothing else.
 """
@@ -27,7 +27,7 @@ from pc_common import (EXIT_INTEGRITY, EXIT_INSTALL, fail, read_bytes, read_text
                        sha256_bytes)
 from pc_schema import load_json
 
-# Empty in v0.1.0 by design.
+# Empty in v1.0.0 by design.
 MIGRATIONS = {}
 
 BACKUP_DIR = ".protean-backup"

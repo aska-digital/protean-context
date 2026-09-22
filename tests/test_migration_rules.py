@@ -12,7 +12,7 @@ Locked rules (decision D4.6), proven against the synthetic v1/v2 fixture pair:
   5. a scaffold-owned file is backed up under
      `{TARGET}/.protean-backup/<from>-to-<to>/` before it is replaced.
 
-v0.1.0 ships an EMPTY migration registry, so the mechanism is exercised here
+v1.0.0 ships an EMPTY migration registry, so the mechanism is exercised here
 directly through `pc_migrate` (the seam the module documents for exactly this),
 plus one end-to-end CLI case for the refused downgrade.
 """
