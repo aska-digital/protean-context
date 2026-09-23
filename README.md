@@ -142,6 +142,27 @@ Errors go to stderr, the summary goes to stdout, and no partial success ever exi
 - `ROUTER.md` is the hot path: identity, hard rules, and pointers only. `modules/` holds the payload. The one-fact-one-home invariant is stated in `modules/README.md`.
 - Intentionally absent: no bundled content, no project facts, no procedures, no history, no configuration values. The repository ships no named Eldunari; the template directory holds only the two template files, and every later write belongs to you.
 
+## Zero-context recovery
+
+Zero-context recovery is the pattern this scaffold implements. A fresh agent
+starts cold with the hot path only: the registry at
+`{TARGET}/eldunarya/eldunarya.json`, one `ROUTER.md`, and one module file.
+The load order is fixed. First the registry resolves a name to a router path.
+Then the agent reads exactly one `ROUTER.md`. Then the agent follows exactly
+one pointer into `modules/` and reads exactly one module. The agent never
+loads the whole tree.
+
+The scaffold guarantees the shape that makes this work. The registry lists
+every Eldunari with its relative path and router path. Each `ROUTER.md`
+carries identity, hard rules, and pointers only. Each module file holds
+payload under `modules/` as markdown. A pointer that does not resolve is a
+defect.
+
+The scaffold deliberately excludes the rest. It bundles no facts, no recovery
+dumps, and no content migration. Population, pointers, and verification are
+the operator's work, described in
+`templates/protean-context/docs/zero-context.md`.
+
 ## The Arif empty scaffold
 
 The Arif side of a created target:

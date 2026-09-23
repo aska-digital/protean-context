@@ -2,6 +2,27 @@
 
 All notable changes to this repository are documented here. The format follows the kit convention: one entry per released version, newest first.
 
+## 1.1.0
+
+This release names and documents the zero-context recovery pattern that the
+scaffold already implements, and adds operator guidance for entering agents
+and writers.
+
+Added:
+
+- README section naming zero-context recovery, the cold-start contents, and
+  the fixed load order of registry, one router, and one module.
+- Entering-agent instructions in the ROUTER template: read this file first,
+  resolve exactly one pointer per task, never load all modules, and report an
+  unresolvable pointer as a defect.
+- Population discipline in the modules README template: one fact one home,
+  relative pointers never copies, and verify by read-back from disk.
+- Operator and agent guide `templates/protean-context/docs/zero-context.md`
+  with the cold-start loop, the pointer rules, and a synthetic worked
+  example.
+- Router-discipline verification over initialized targets: unresolvable
+  pointers and homeless pointers fail the check.
+
 ## 1.0.0
 
 Stable release. No schema, scaffold, or CLI behavior changes from the 0.1.0 beta; this release promotes the beta to stable.

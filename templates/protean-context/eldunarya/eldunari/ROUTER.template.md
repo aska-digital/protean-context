@@ -4,6 +4,16 @@
 
 This file is the hot path of the Eldunari named `{ELDUNARI_NAME}`, created inside the Eldunarya at `{TARGET}/eldunarya` by the bootstrap CLI. It carries identity, hard rules, and pointers only, so that a reader (or an agent) gets the essentials without loading any payload file.
 
+## Entering this Eldunari
+
+The entering agent reads this file first. The load order is the registry,
+then this file, then exactly one module. The agent resolves exactly one
+pointer per task and never loads all modules. A pointer of the form
+`modules/<file>.md` names the single home of the fact it describes. An
+unresolvable pointer is a defect: the agent stops and reports it instead of
+guessing. This file stays router-only: identity, hard rules, and pointers.
+Facts live in `modules/`.
+
 ## Rules
 
 - This file holds three kinds of content only: identity (what this Eldunari is for), hard rules (inviolable constraints), and pointers (paths, with what lives there).

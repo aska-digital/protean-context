@@ -7,6 +7,7 @@ exits 6 (decision D5.5).
 """
 
 import os
+import re
 
 from pc_common import EXIT_VERIFY, HEX256_RE, NAME_RE, out, sha256_file
 from pc_paths import (ARIF_ADAPTERS_README_REL, ARIF_EMPTY_DIRS, ARIF_MANIFEST_REL,
@@ -108,6 +109,121 @@ def router_file_rel(name):
     return "%s/%s" % (ELDUNARYA_DIR, registry_entry_router(name))
 
 
+POINTER_RE = re.compile(
+    r"^\s*modules/([A-Za-z0-9][A-Za-z0-9._-]*\.md)\s*->\s*(\S.*)$")
+
+
+def unfenced_lines(text):
+    """Lines outside fenced code blocks; fences are ``` lines, inclusive."""
+    lines = []
+    fenced = False
+    for line in text.splitlines():
+        if line.strip().startswith("```"):
+            fenced = not fenced
+            continue
+        if not fenced:
+            lines.append(line)
+    return lines
+
+
+def check_router_discipline(target, problems):
+    """Pointer shape and resolution for every initialized Eldunari.
+
+    Read-only: every read stays under --target, nothing is written. A
+    missing or unreadable ROUTER.md or modules/ directory is a problem,
+    never a pass. Zero pointers is a pass. Pointer grammar, fence rule,
+    and homeless/unresolved definitions follow the zero-context lock:
+    flat `modules/<file>.md -> description` lines outside fences must
+    resolve to a regular file under that Eldunari's modules/, module
+    bodies resolve the same way, and a markdown module no unfenced
+    router pointer names is homeless.
+    """
+    registry = os.path.join(target, REGISTRY_REL)
+    if not os.path.isfile(registry):
+        problems.append("%s: missing (router discipline needs the registry "
+                        "to find routers)" % REGISTRY_REL)
+        return
+    document = load_json(registry, REGISTRY_REL)
+    names = []
+    for entry in document.get("eldunari") or []:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name")
+        if isinstance(name, str):
+            names.append(name)
+    for name in names:
+        router_rel = router_file_rel(name)
+        modules_rel = modules_path(name)
+        router_path = os.path.join(target, router_rel)
+        modules_dir = os.path.join(target, modules_rel)
+        if not os.path.isfile(router_path):
+            problems.append("%s: missing (router discipline cannot pass "
+                            "without the router)" % router_rel)
+            continue
+        if not os.path.isdir(modules_dir):
+            problems.append("%s: missing directory (router discipline cannot "
+                            "pass without the modules home)" % modules_rel)
+            continue
+        try:
+            with open(router_path, "r", encoding="utf-8") as handle:
+                router_text = handle.read()
+        except OSError as exc:
+            problems.append("%s: unreadable (%s)" % (router_rel, exc))
+            continue
+        try:
+            module_entries = sorted(os.listdir(modules_dir))
+        except OSError as exc:
+            problems.append("%s: unreadable directory (%s)"
+                            % (modules_rel, exc))
+            continue
+        pointed = set()
+        for lineno, line in enumerate(unfenced_lines(router_text), 1):
+            match = POINTER_RE.match(line)
+            if match:
+                filename = match.group(1)
+                pointed.add(filename)
+                if not os.path.isfile(os.path.join(modules_dir, filename)):
+                    problems.append(
+                        "%s:%d: unresolved pointer: modules/%s names a "
+                        "home that is not there" % (router_rel, lineno,
+                                                    filename))
+                continue
+            if line.lstrip().startswith("modules/"):
+                problems.append(
+                    "%s:%d: nonconforming pointer line: %s"
+                    % (router_rel, lineno, line.strip()))
+        for entry in module_entries:
+            full = os.path.join(modules_dir, entry)
+            if entry.startswith(".") or not os.path.isfile(full):
+                continue
+            try:
+                with open(full, "r", encoding="utf-8") as handle:
+                    body = handle.read()
+            except (OSError, UnicodeDecodeError) as exc:
+                problems.append("%s/%s: unreadable (%s)"
+                                % (modules_rel, entry, exc))
+                continue
+            for lineno, line in enumerate(unfenced_lines(body), 1):
+                match = POINTER_RE.match(line)
+                if match and not os.path.isfile(
+                        os.path.join(modules_dir, match.group(1))):
+                    problems.append(
+                        "%s/%s:%d: unresolved pointer: modules/%s names a "
+                        "home that is not there"
+                        % (modules_rel, entry, lineno, match.group(1)))
+        for entry in module_entries:
+            if entry == "README.md" or entry.startswith("."):
+                continue
+            if not entry.endswith(".md"):
+                continue
+            if not os.path.isfile(os.path.join(modules_dir, entry)):
+                continue
+            if entry not in pointed:
+                problems.append(
+                    "%s/%s: homeless module: no unfenced pointer line in %s "
+                    "names it" % (modules_rel, entry, router_rel))
+
+
 def check_arif(target, problems):
     path = os.path.join(target, ARIF_MANIFEST_REL)
     if not os.path.isfile(path):
@@ -178,6 +294,7 @@ def check_records(target, problems, enabled):
 CHECKS = (
     ("receipt", check_receipt),
     ("eldunarya-registry", check_registry),
+    ("router-discipline", check_router_discipline),
     ("arif-store", check_arif),
 )
 
