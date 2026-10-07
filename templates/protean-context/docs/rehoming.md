@@ -50,6 +50,10 @@ All Arif storage configuration lives in one file: `{TARGET}/arif/arif.json` (sch
 
 Upgrade path: external engines (for example pgvector or chroma) are user-side adapters behind the ingestion and store boundary. You configure them on your side of that boundary; they are never dependencies of this scaffold, which bundles no database, no server, and no index.
 
+### Checking a user-side store adapter before the first ingest
+
+When the configured adapter is a database extension, check that the extension is present for the server's major version before running ingest. A load error that names the extension's shared library means the library is missing for that server version. It does not mean the record is bad. Install or enable the matching extension build, then rerun ingest.
+
 ## 5. Hermes settings
 
 Change profile settings with the Hermes CLI only:
