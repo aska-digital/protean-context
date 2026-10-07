@@ -2,6 +2,13 @@
 
 All notable changes to this repository are documented here. The format follows the kit convention: one entry per released version, newest first.
 
+## Unreleased
+
+Added:
+
+- Re-homing guide subsection on checking a user-side store adapter's
+  prerequisites before the first ingest.
+
 ## 1.1.0
 
 This release names and documents the zero-context recovery pattern that the
