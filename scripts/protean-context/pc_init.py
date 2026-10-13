@@ -190,7 +190,7 @@ def build_plan(target, names):
         else:
             kind, note = CLASS_CONFLICT, "user-modified file kept as is"
         action = {"rel": rel, "kind": kind, "note": note, "text": texts[rel],
-                  "sha256": wanted, "backup": None}
+                  "sha256": wanted, "original_sha256": current.get(rel), "backup": None}
         if kind == CLASS_REPLACE:
             action["backup"] = (file_version(target, rel),
                                 file_version(target, rel, texts[rel]))
@@ -222,12 +222,20 @@ def apply_plan(target, plan):
                 backups.append(rel_backup)
         write_text(destination, action["text"])
         written.append(action["rel"])
-    created = {}
-    for rel in sorted(iter_rel_files(target)):
-        if rel == RECEIPT_NAME:
+    # Ownership hashes describe scaffold bytes, never a later user edit. Carry
+    # untouched entries forward verbatim; otherwise a conflict on rerun would
+    # authorize remove to delete the very file init promised to preserve.
+    created = {rel: digest for rel, digest in plan["receipt_hashes"].items()
+               if os.path.isfile(os.path.join(target, rel))}
+    for action in plan["actions"]:
+        rel = action["rel"]
+        if rel not in written:
             continue
-        if rel in written or rel in plan["receipt_hashes"]:
-            created[rel] = sha256_file(os.path.join(target, rel))
+        if (action["kind"] == CLASS_CREATE
+                or plan["receipt_hashes"].get(rel) == action["original_sha256"]):
+            created[rel] = action["sha256"]
+        # The registry can merge user edits. Writing that merged document does
+        # not transfer ownership of its preserved user content to the scaffold.
     directories = set(plan["directories"])
     for rel in (plan["receipt_document"] or {}).get("directories") or []:
         if isinstance(rel, str) and os.path.isdir(os.path.join(target, rel)):

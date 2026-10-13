@@ -80,6 +80,53 @@ class TestRemoval(unittest.TestCase):
                 os.path.join(target, "eldunarya", "eldunari", "demo")),
                 "a directory holding a surviving file must be kept")
 
+    def test_rerun_does_not_claim_user_edits_for_later_removal(self):
+        with tempfile.TemporaryDirectory(prefix="removal-rerun-edits-") as work:
+            target = initialize(work)
+            original = pc_support.load_json(os.path.join(target, pc_support.RECEIPT))
+            write(os.path.join(target, ROUTER), USER_EDIT)
+            rerun = pc_support.run_cli("init", "--target", target, "--name", "demo")
+            self.assertEqual(4, rerun.returncode, rerun.stderr)
+            after = pc_support.load_json(os.path.join(target, pc_support.RECEIPT))
+            before_hashes = {row["path"]: row["sha256"] for row in original["created"]}
+            after_hashes = {row["path"]: row["sha256"] for row in after["created"]}
+            self.assertEqual(before_hashes[ROUTER], after_hashes[ROUTER],
+                             "a skipped edit must keep its original ownership hash")
+            removed = pc_support.run_cli("remove", "--target", target)
+            self.assertEqual(0, removed.returncode, removed.stderr)
+            self.assertTrue(os.path.isfile(os.path.join(target, ROUTER)))
+            self.assertEqual(USER_EDIT, pc_support.read_text(os.path.join(target, ROUTER)))
+
+    def test_registry_merge_does_not_claim_preserved_user_content(self):
+        with tempfile.TemporaryDirectory(prefix="removal-rerun-registry-") as work:
+            target = initialize(work)
+            path = os.path.join(target, REGISTRY)
+            registry = pc_support.load_json(path)
+            registry["eldunari"].append({"name": "personal", "path": "eldunari/personal",
+                                        "router": "eldunari/personal/ROUTER.md"})
+            write(path, pc_support.dumps_json(registry))
+            rerun = pc_support.run_cli("init", "--target", target, "--name", "second")
+            self.assertEqual(0, rerun.returncode, rerun.stderr)
+            merged = pc_support.load_json(path)
+            self.assertEqual(["demo", "personal", "second"],
+                             [entry["name"] for entry in merged["eldunari"]])
+            removed = pc_support.run_cli("remove", "--target", target)
+            self.assertEqual(0, removed.returncode, removed.stderr)
+            self.assertTrue(os.path.isfile(path), "merged user registry must survive removal")
+            self.assertEqual(merged, pc_support.load_json(path))
+
+    def test_rerun_does_not_claim_user_files_outside_requested_name(self):
+        with tempfile.TemporaryDirectory(prefix="removal-rerun-other-") as work:
+            target = initialize(work)
+            write(os.path.join(target, ROUTER), USER_EDIT)
+            rerun = pc_support.run_cli("init", "--target", target, "--name", "second")
+            self.assertEqual(0, rerun.returncode, rerun.stderr)
+            removed = pc_support.run_cli("remove", "--target", target)
+            self.assertEqual(0, removed.returncode, removed.stderr)
+            self.assertTrue(os.path.isfile(os.path.join(target, ROUTER)),
+                            "ensuring another name must not claim the edited demo router")
+            self.assertEqual(USER_EDIT, pc_support.read_text(os.path.join(target, ROUTER)))
+
     def test_remove_never_removes_a_directory_that_holds_user_files(self):
         with tempfile.TemporaryDirectory(prefix="removal-dir-") as work:
             target = initialize(work)
