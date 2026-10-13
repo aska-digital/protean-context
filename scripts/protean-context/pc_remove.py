@@ -9,7 +9,7 @@ last. `remove --dry-run` prints the same plan without deleting anything.
 
 import os
 
-from pc_common import EXIT_SCHEMA, fail, out, sha256_file
+from pc_common import EXIT_SCHEMA, HEX256_RE, fail, is_within, out, sha256_file
 from pc_receipt import (created_hashes, receipt_directories, receipt_path,
                         read_receipt)
 
@@ -20,8 +20,33 @@ def deepest_first(paths):
     return sorted(paths, key=lambda item: (-item.count("/"), item))
 
 
+def validate_receipt_paths(target, document):
+    """Preflight the entire deletion authority before planning any removal."""
+    def check_path(rel):
+        if (not isinstance(rel, str) or not rel or "\x00" in rel
+                or os.path.isabs(rel)
+                or any(part in ("", ".", "..") for part in rel.split("/"))):
+            fail(EXIT_SCHEMA, "invalid receipt: unsafe relative path %r" % (rel,))
+        if not is_within(os.path.join(target, rel), target):
+            fail(EXIT_SCHEMA, "invalid receipt: path escapes target: %r" % rel)
+
+    for field in ("created", "directories"):
+        if not isinstance(document.get(field), list):
+            fail(EXIT_SCHEMA, "invalid receipt: %s must be an array" % field)
+    for entry in document["created"]:
+        if not isinstance(entry, dict):
+            fail(EXIT_SCHEMA, "invalid receipt: created entry must be an object")
+        check_path(entry.get("path"))
+        digest = entry.get("sha256")
+        if not isinstance(digest, str) or not HEX256_RE.fullmatch(digest):
+            fail(EXIT_SCHEMA, "invalid receipt: created sha256 must be 64 hex digits")
+    for rel in document["directories"]:
+        check_path(rel)
+
+
 def plan_removal(target, document):
     """Classify every receipt-listed path without deleting anything."""
+    validate_receipt_paths(target, document)
     hashes = created_hashes(document)
     removable, skipped, absent = [], [], []
     for rel in deepest_first(list(hashes)):
@@ -44,6 +69,8 @@ def plan_removal(target, document):
 
 def run(target, dry_run=False):
     """Run remove; return the process exit code."""
+    if not is_within(receipt_path(target), target):
+        fail(EXIT_SCHEMA, "invalid receipt: receipt path escapes target")
     document = read_receipt(target)
     if document is None:
         fail(EXIT_SCHEMA, "no init receipt at %s: remove is scoped to what init "
